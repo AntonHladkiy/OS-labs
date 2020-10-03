@@ -50,7 +50,8 @@ public class Main {
                     if(Results.res.size()==2){
                         latch.countDown();
                     }
-                } catch (Exception e) {
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
             } catch (IOException e) {
                 e.printStackTrace();
@@ -73,8 +74,8 @@ public class Main {
                 if(Results.res.size()==2){
                     latch.countDown();
                 }
-            } catch (Exception e) {
-
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -83,7 +84,9 @@ public class Main {
         KeyHandler keyHandler=new KeyHandler();
         keyHandler.start();
         try{latch.await();}
-        catch(Exception e){}
+        catch (InterruptedException e) {
+        e.printStackTrace();
+        }
         Results.printResult();
         PauseHandler.Stop();
     }

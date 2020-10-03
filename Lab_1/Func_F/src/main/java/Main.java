@@ -14,7 +14,10 @@ public class Main {
         int res=0;
         try{
         res =IntOps.funcF(num);}
-        catch(Exception e){}
+        catch(InterruptedException e){
+            e.printStackTrace();
+            return;
+        }
         System.exit(res);
     }
 }
