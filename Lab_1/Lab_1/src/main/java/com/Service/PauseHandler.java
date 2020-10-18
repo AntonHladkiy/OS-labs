@@ -9,29 +9,37 @@ public class PauseHandler{
     private static final int WAIT_TIME = 15000;
 
     public static void Stop() {
-        Main.setFdestroyed(true);
-        Main.setGdestroyed(true);
+        Main.setFfinished( true );
+        Main.setGfinished( true );
         Main.getProcessF().destroy();
         Main.getProcessG().destroy();
-        System.exit(0);
     }
 
     public static void startPrompt() {
+        Main.setPromptActive( true );
         System.out.println("Cancellation Prompt:");
         System.out.println("(1) stop");
         System.out.println("(2) continue");
+        System.out.println("System will shut down automatically in 15 seconds");
         Scanner scanner = new Scanner(System.in);
-        long promptStart = System.currentTimeMillis();
-        while (System.currentTimeMillis() - promptStart < WAIT_TIME) {
-            String in = scanner.nextLine();
-            if (in.equals("1")) {
-                Stop();
-            } else if (in.equals("2")) {
-                return;
-            } else {
-                System.out.println("Wrong input");
+        Thread thisThread=Thread.currentThread();
+        new Thread(() ->{
+            while (true) {
+                String in = scanner.nextLine();
+                if (in.equals("1")) {
+                    thisThread.interrupt();
+                    return;
+                } else if (in.equals("2")) {
+                    return;
+                } else {
+                    System.out.println("Wrong input");
+                }
             }
-        }
-        Stop();
+        }).start();
+       try{Thread.sleep(WAIT_TIME);}
+       catch(InterruptedException e){}
+        Main.setPromptActive( false );
+       Results.printMainResult();
+       Stop();
     }
 }

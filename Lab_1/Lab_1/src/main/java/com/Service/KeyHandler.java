@@ -1,5 +1,7 @@
 package com.Service;
 
+import com.model.Results;
+
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -14,7 +16,6 @@ public class KeyHandler extends JComponent {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(0, 0);
         frame.setVisible(true);
-
         frame.setFocusable(true);
         frame.setFocusTraversalKeysEnabled(false);
         frame.addKeyListener(new KeyListener());
@@ -28,6 +29,10 @@ public class KeyHandler extends JComponent {
         public void keyPressed(KeyEvent e) {
             if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
                 PauseHandler.startPrompt();
+            }
+            if (e.getKeyCode() == KeyEvent.VK_Q) {
+                Results.printMainResult( );
+                PauseHandler.Stop();
             }
         }
 
