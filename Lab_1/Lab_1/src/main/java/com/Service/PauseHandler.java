@@ -2,6 +2,7 @@ package com.Service;
 import com.Main;
 import com.model.Results;
 
+import java.util.List;
 import java.util.Scanner;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -9,10 +10,12 @@ public class PauseHandler{
     private static final int WAIT_TIME = 15000;
 
     public static void Stop() {
-        Main.setFfinished( true );
-        Main.setGfinished( true );
-        Main.getProcessF().destroy();
-        Main.getProcessG().destroy();
+        List<Boolean> finished=Main.getFinished();
+        List<Process> processes=Main.getProcesses();
+        for(int i=0;i<finished.size();i++){
+            finished.set(i,true);
+            processes.get(i).destroy();
+        }
     }
 
     public static void startPrompt() {

@@ -8,6 +8,5 @@ import lombok.Setter;
 @Setter
 @Getter
 public class FuncResult {
-    private String funcName;
     private int res;
 }

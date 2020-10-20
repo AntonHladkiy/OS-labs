@@ -28,7 +28,7 @@ public class Results {
                 return;
             }
         }
-        if(res.size()!=2) {
+        if(res.size()!=Main.getProcesses().size()) {
             System.out.println( "There is no result of main function" );
             return;
         }
