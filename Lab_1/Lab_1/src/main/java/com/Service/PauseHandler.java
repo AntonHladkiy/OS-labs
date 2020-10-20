@@ -3,7 +3,7 @@ import com.Main;
 import com.model.Results;
 
 import java.util.Scanner;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class PauseHandler{
     private static final int WAIT_TIME = 15000;
@@ -17,6 +17,7 @@ public class PauseHandler{
 
     public static void startPrompt() {
         Main.setPromptActive( true );
+        AtomicBoolean continueProcess= new AtomicBoolean( false );
         System.out.println("Cancellation Prompt:");
         System.out.println("(1) stop");
         System.out.println("(2) continue");
@@ -30,6 +31,8 @@ public class PauseHandler{
                     thisThread.interrupt();
                     return;
                 } else if (in.equals("2")) {
+                    continueProcess.set( true );
+                    thisThread.interrupt();
                     return;
                 } else {
                     System.out.println("Wrong input");
@@ -39,6 +42,9 @@ public class PauseHandler{
        try{Thread.sleep(WAIT_TIME);}
        catch(InterruptedException e){}
         Main.setPromptActive( false );
+       if(continueProcess.get()){
+           return;
+       }
        Results.printMainResult();
        Stop();
     }

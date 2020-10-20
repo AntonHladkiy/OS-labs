@@ -28,7 +28,7 @@ public class Results {
                 return;
             }
         }
-        if(res.size()==1||res.size()==0) {
+        if(res.size()!=2) {
             System.out.println( "There is no result of main function" );
             return;
         }
