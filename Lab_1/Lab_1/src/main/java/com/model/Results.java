@@ -8,7 +8,7 @@ import java.util.List;
 
 public class Results {
     public static List<com.model.FuncResult> res=new ArrayList<com.model.FuncResult>();
-    public static void printMainResult(){
+    public static synchronized void  printMainResult(){
         if(Main.getResultsPrinted().get()){
             return;
         }
