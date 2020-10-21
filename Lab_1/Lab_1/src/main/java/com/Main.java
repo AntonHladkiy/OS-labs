@@ -15,27 +15,25 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class Main {
     @Getter
     @Setter
-    private static boolean ResultsPrinted = false;
+    private static AtomicBoolean ResultsPrinted=new AtomicBoolean( false );
     @Getter
     @Setter
     private static List<Boolean> finished=new ArrayList<Boolean>();
     @Getter
-    @Setter
-    private static boolean promptActive;
-    @Getter
     private static List<Process> processes=new ArrayList<Process>();
-
+    @Getter
+    private static KeyHandler keyHandler;
     public static void main(String[] args) {
-        new Thread( ( ) -> {
-            KeyHandler keyHandler = new KeyHandler( );
-            keyHandler.start( );
-        } ).start( );
+        keyHandler = new KeyHandler( );
+        keyHandler.start( );
         while (true) {
-            ResultsPrinted=false;
+            ResultsPrinted.set( false );
+            PauseHandler.setThread( null );
             finished=new ArrayList<Boolean>();
             Results.res=new ArrayList<FuncResult>();
             processes=new ArrayList<Process>();
@@ -62,22 +60,30 @@ public class Main {
                 for(int i =0;i<processes.size();i++){
                     if (!processes.get(i).isAlive( ) && !finished.get(i)) {
                         finished.set(i,true);
-                        Results.res.add( new FuncResult(processes.get(i).exitValue( ) ) );
+                        Results.res.add( new FuncResult(functions.get(i),processes.get(i).exitValue( )) );
                         if (processes.get(i).exitValue( ) == 0) {
-                            Results.printMainResult( );
+                            System.out.println("Result of main function = 0");
+                            ResultsPrinted.set(true);
                             break;
                         }
                     }
                 }
                 if (Results.res.size( ) == functions.size() ) {
-                    Results.printMainResult( );
+                    Results.printMainResult();
                     break;
                 }
-                if(ResultsPrinted){
+                if(ResultsPrinted.get()){
                     break;
                 }
+
             }
-            PauseHandler.Stop( );
+            PauseHandler.Stop();
+            if(PauseHandler.getThread()!=null){
+            try {
+                PauseHandler.getThread().join();
+            } catch (InterruptedException e) {
+                e.printStackTrace( );
+            }}
         }
     }
 }

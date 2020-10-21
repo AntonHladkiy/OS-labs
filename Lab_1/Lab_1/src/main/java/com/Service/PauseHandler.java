@@ -1,14 +1,21 @@
 package com.Service;
 import com.Main;
 import com.model.Results;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.List;
-import java.util.Scanner;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class PauseHandler{
     private static final int WAIT_TIME = 15000;
-
+    @Getter
+    private static AtomicBoolean continueProcess= new AtomicBoolean( false );
+    @Getter
+    private static AtomicBoolean endPrompt= new AtomicBoolean( false );
+    @Setter
+    @Getter
+    private static Thread thread=null;
     public static void Stop() {
         List<Boolean> finished=Main.getFinished();
         List<Process> processes=Main.getProcesses();
@@ -19,36 +26,21 @@ public class PauseHandler{
     }
 
     public static void startPrompt() {
-        Main.setPromptActive( true );
-        AtomicBoolean continueProcess= new AtomicBoolean( false );
-        System.out.println("Cancellation Prompt:");
-        System.out.println("(1) stop");
-        System.out.println("(2) continue");
-        System.out.println("System will shut down automatically in 15 seconds");
-        Scanner scanner = new Scanner(System.in);
-        Thread thisThread=Thread.currentThread();
-        new Thread(() ->{
-            while (true) {
-                String in = scanner.nextLine();
-                if (in.equals("1")) {
-                    thisThread.interrupt();
-                    return;
-                } else if (in.equals("2")) {
-                    continueProcess.set( true );
-                    thisThread.interrupt();
-                    return;
-                } else {
-                    System.out.println("Wrong input");
-                }
-            }
-        }).start();
-       try{Thread.sleep(WAIT_TIME);}
-       catch(InterruptedException e){}
-        Main.setPromptActive( false );
+        endPrompt.set(false);
+        continueProcess.set(false);
+        Main.getKeyHandler().prompt();
+        thread=new Thread(() ->{
+        long start=System.currentTimeMillis();
+        long currentTime=System.currentTimeMillis();
+       while(currentTime-start<=WAIT_TIME&&!Main.getResultsPrinted( ).get( )&&!endPrompt.get()) {
+           currentTime = System.currentTimeMillis( );
+       }
+       Main.getKeyHandler().reset();
        if(continueProcess.get()){
            return;
        }
        Results.printMainResult();
-       Stop();
+       Stop();});
+       thread.start();
     }
 }

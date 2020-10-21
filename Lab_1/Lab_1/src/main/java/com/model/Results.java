@@ -1,8 +1,7 @@
 package com.model;
 
 import com.Main;
-import lombok.Getter;
-import lombok.Setter;
+
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,33 +9,42 @@ import java.util.List;
 public class Results {
     public static List<com.model.FuncResult> res=new ArrayList<com.model.FuncResult>();
     public static void printMainResult(){
-        if(Main.isResultsPrinted()){
-            return;
-        }
-        if(Main.isPromptActive()){
+        if(Main.getResultsPrinted().get()){
             return;
         }
         int min=0;
-        Main.setResultsPrinted( true );
+
         if(res.size()!=0){
             min=res.get(0).getRes();
         }
-        for(int i=0;i<res.size();i++){
-            if(res.get(i).getRes()==0){
-                min=0;
-                System.out.println("Result of main function = "+ min);
-                return;
+        if(res.size()!=Main.getFinished().size()) {
+            boolean Fcheck=false;
+            boolean Gcheck=false;
+            for(int i=0;i<res.size();i++){
+                if(res.get(i).getFunc().equals( "F" )){
+                    Fcheck=true;
+                }
+                if(res.get(i).getFunc().equals( "G" )){
+                    Gcheck=true;
+                }
             }
-        }
-        if(res.size()!=Main.getProcesses().size()) {
             System.out.println( "There is no result of main function" );
+            if(!Fcheck){
+                System.out.println( "Function F didnt return result" );
+            }
+            if(!Gcheck){
+                System.out.println( "Function G didnt return result" );
+            }
+            Main.getResultsPrinted().set( true );
             return;
         }
         for(int i=0;i<res.size();i++){
+            //min+=res.get(i).getRes();
             if(res.get(i).getRes()<min){
                 min=res.get(i).getRes();
             }
         }
         System.out.println("Result of main function = "+ min);
+        Main.getResultsPrinted().set( true );
     }
 }
