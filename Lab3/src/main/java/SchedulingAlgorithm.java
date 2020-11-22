@@ -7,7 +7,7 @@ import java.io.*;
 
 public class SchedulingAlgorithm {
 
-  public static Results multipleQueuesAlgorithm(int runtime, Vector processVector, Results result) {
+  public static Results run(int runtime, Vector processVector, Results result) {
     int i = 0;
     int comptime = 0;
     int currentProcess = 0;

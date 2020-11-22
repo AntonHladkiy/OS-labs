@@ -116,7 +116,7 @@ public class Scheduling {
         i++;
       }
     }
-    result = SchedulingAlgorithm.multipleQueuesAlgorithm(runtime, processVector, result);
+    result = SchedulingAlgorithm.run(runtime, processVector, result);
     try {
       //BufferedWriter out = new BufferedWriter(new FileWriter(resultsFile));
       PrintStream out = new PrintStream(new FileOutputStream(resultsFile));
