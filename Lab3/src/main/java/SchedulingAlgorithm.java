@@ -15,33 +15,68 @@ public class SchedulingAlgorithm {
     int size = processVector.size();
     int completed = 0;
     MultipleQueuesScheduler scheduler = new MultipleQueuesScheduler(processVector);
-
     String resultsFile = "Summary-Processes";
-    result.schedulingType = "Batch (Nonpreemptive)";
+    result.schedulingType = "Batch (Preemptive)";
     result.schedulingName = "Multiple queues";
     try {
       PrintStream out = new PrintStream(new FileOutputStream(resultsFile));
       sProcess process = scheduler.getNextProcess();
       out.println("Process: " + process.processIndex + " with priority "+process.priority +" registered... (" + process.cputime + " " + process.ioblocking + " " + process.cpudone + ")");
       while (comptime < runtime) {
-        if (process.cpudone == process.cputime) {
-          completed++;
-          out.println("Process: " + process.processIndex + " with priority "+process.priority +" completed... (" + process.cputime + " " + process.ioblocking + " " + process.cpudone + ")");
-          if (completed == size) {
-            result.compuTime = comptime;
-            out.close();
-            return result;
+        for(int j=0;j<scheduler.blockedProcesses.size();j++){
+          sProcess blockedProcess=scheduler.blockedProcesses.get(j);
+          blockedProcess.blockingTime--;
+          if(blockedProcess.blockingTime==0){
+            blockedProcess.isBlocked=false;
+            blockedProcess.blockingTime=100;
+            scheduler.blockedProcesses.remove( j );
+            out.println("Process: " + blockedProcess.processIndex +" with priority "+blockedProcess.priority + " unblocked... (" + blockedProcess.cputime + " " + blockedProcess.ioblocking + " " + blockedProcess.cpudone + ")");
+            if(process!=null) {
+              if (blockedProcess.priority < process.priority) {
+                continue;
+              } else{
+                out.println( "Process: " + process.processIndex + " with priority " + process.priority + " stopped working... (" + process.cputime + " " + process.ioblocking + " " + process.cpudone + ")" );
+              }
+            }
+            process = scheduler.getNextProcess( );
+            out.println( "Process: " + process.processIndex + " with priority " + process.priority + " registered... (" + process.cputime + " " + process.ioblocking + " " + process.cpudone + ")" );
+
           }
-          process = scheduler.getNextProcess();
-          out.println("Process: " + process.processIndex +" with priority "+process.priority + " registered... (" + process.cputime + " " + process.ioblocking + " " + process.cpudone + ")");
         }
-        if (process.ioblocking == process.ionext) {
-          out.println("Process: " + process.processIndex + " with priority "+process.priority +" I/O blocked... (" + process.cputime + " " + process.ioblocking + " " + process.cpudone + ")");
-          process.numblocked++;
-          process.ionext = 0;
-          process = scheduler.getNextProcess();
-          out.println("Process: " + process.processIndex +" with priority "+process.priority + " registered... (" + process.cputime + " " + process.ioblocking + " " + process.cpudone + ")");
+        if (process == null) {
+          continue;
         }
+          if (process.cpudone == process.cputime) {
+            completed++;
+            out.println( "Process: " + process.processIndex + " with priority " + process.priority + " completed... (" + process.cputime + " " + process.ioblocking + " " + process.cpudone + ")" );
+            if (completed == size) {
+              result.compuTime = comptime;
+              out.close( );
+              return result;
+            }
+            process = scheduler.getNextProcess( );
+            if(process==null){
+              continue;
+            }
+            out.println( "Process: " + process.processIndex + " with priority " + process.priority + " registered... (" + process.cputime + " " + process.ioblocking + " " + process.cpudone + ")" );
+          }
+
+
+
+
+          if (process.ioblocking == process.ionext) {
+            out.println("Process: " + process.processIndex + " with priority "+process.priority +" I/O blocked... (" + process.cputime + " " + process.ioblocking + " " + process.cpudone + ")");
+            process.numblocked++;
+            process.isBlocked=true;
+            scheduler.blockedProcesses.add(process);
+            process.ionext = 0;
+            process = scheduler.getNextProcess();
+            if(process==null){
+              continue;
+            }
+            out.println("Process: " + process.processIndex +" with priority "+process.priority + " registered... (" + process.cputime + " " + process.ioblocking + " " + process.cpudone + ")");
+          }
+
         process.cpudone++;
         if (process.ioblocking > 0) {
           process.ionext++;

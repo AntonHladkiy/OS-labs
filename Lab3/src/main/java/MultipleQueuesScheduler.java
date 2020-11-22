@@ -3,7 +3,7 @@ import java.util.*;
 public class MultipleQueuesScheduler{
     Vector queues;
     sProcess currentProcess = null;
- //   sProcess blockedProcess = null;
+    ArrayList<sProcess> blockedProcesses = new ArrayList<>( );
     public MultipleQueuesScheduler(Vector processes){
         queues = new Vector();
         splitProcessesToQueues(processes);
@@ -47,16 +47,26 @@ public class MultipleQueuesScheduler{
         int numberOfQueues = queues.size();
         for(int i = 0; i < numberOfQueues;i++){
             Deque currentProcessGroup = (Deque) queues.get(i);
+            int j=0;
             while(currentProcessGroup.peekFirst()!=null){//if Queue isn`t empty
-                sProcess currentProcess = (sProcess)currentProcessGroup.peek();
-                if(currentProcess.cpudone != currentProcess.cputime){
+                if(j>=currentProcessGroup.size()){
+                    break;
+                }
+                sProcess tempProcess = (sProcess)currentProcessGroup.peek();
+                if(tempProcess.cpudone != tempProcess.cputime){
                     currentProcessGroup.removeFirst();
-                    currentProcessGroup.addLast(currentProcess);//set currentProcess to the end of queue
-                    this.currentProcess = currentProcess;
-                    return currentProcess;
+                    currentProcessGroup.addLast(tempProcess);
+                    if(tempProcess.isBlocked){
+                        j++;
+                        continue;
+                    }
+                    //set currentProcess to the end of queue
+                    this.currentProcess = tempProcess;
+                    return tempProcess;
                 }else{
                     currentProcessGroup.removeFirst();//removing finished process from queue
                 }
+                j++;
             }
         }
         return null;

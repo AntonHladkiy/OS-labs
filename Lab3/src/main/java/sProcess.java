@@ -6,6 +6,8 @@ public class sProcess implements Comparable{
   public int numblocked;
   public int priority;
   public int processIndex;
+  public boolean isBlocked;
+  public int blockingTime=100;
   public static int index=0;
   public sProcess (int cputime, int ioblocking,int priority ,int cpudone, int ionext, int numblocked) {
     this.cputime = cputime;
