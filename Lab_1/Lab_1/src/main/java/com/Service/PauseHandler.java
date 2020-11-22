@@ -33,6 +33,7 @@ public class PauseHandler{
         long start=System.currentTimeMillis();
         long currentTime=System.currentTimeMillis();
        while(currentTime-start<=WAIT_TIME&&!Main.getResultsPrinted( ).get( )&&!endPrompt.get()) {
+
            currentTime = System.currentTimeMillis( );
        }
        Main.getKeyHandler().reset();
