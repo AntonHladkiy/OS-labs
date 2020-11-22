@@ -46,6 +46,7 @@ public class SchedulingAlgorithm {
         if (process.ioblocking > 0) {
           process.ionext++;
         }
+
         comptime++;
       }
       out.close();

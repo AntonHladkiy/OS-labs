@@ -3,7 +3,7 @@ import java.util.*;
 public class MultipleQueuesScheduler{
     Vector queues;
     sProcess currentProcess = null;
-
+ //   sProcess blockedProcess = null;
     public MultipleQueuesScheduler(Vector processes){
         queues = new Vector();
         splitProcessesToQueues(processes);
