@@ -61,18 +61,4 @@ public class MultipleQueuesScheduler{
         }
         return null;
     }
-    private int removeCurrentProcessFromHisQueue(){
-        if(currentProcess == null)
-            return -1;
-        int numberOfQueues = queues.size();
-        for(int i = 0; i < numberOfQueues;i++){
-            Deque currentProcessGroup = (Deque) queues.get(i);
-            sProcess process = (sProcess)currentProcessGroup.peekLast();
-            if(currentProcess == process) {
-                currentProcessGroup.removeLast();
-                return i;
-            }
-        }
-        return -1;
-    }
 } 
