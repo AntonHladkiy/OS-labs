@@ -32,7 +32,7 @@ public class SchedulingAlgorithm {
             scheduler.blockedProcesses.remove( j );
             out.println("Process: " + blockedProcess.processIndex +" with priority "+blockedProcess.priority + " unblocked... (" + blockedProcess.cputime + " " + blockedProcess.ioblocking + " " + blockedProcess.cpudone + ")");
             if(process!=null) {
-              if (blockedProcess.priority < process.priority) {
+              if (blockedProcess.priority <= process.priority) {
                 continue;
               } else{
                 out.println( "Process: " + process.processIndex + " with priority " + process.priority + " stopped working... (" + process.cputime + " " + process.ioblocking + " " + process.cpudone + ")" );
