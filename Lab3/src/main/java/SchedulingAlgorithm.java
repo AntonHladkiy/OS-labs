@@ -40,7 +40,6 @@ public class SchedulingAlgorithm {
             }
             process = scheduler.getNextProcess( );
             out.println( "Process: " + process.processIndex + " with priority " + process.priority + " registered... (" + process.cputime + " " + process.ioblocking + " " + process.cpudone + ")" );
-
           }
         }
         if (process == null) {

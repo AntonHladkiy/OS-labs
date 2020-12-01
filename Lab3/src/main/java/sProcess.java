@@ -19,7 +19,6 @@ public class sProcess implements Comparable{
     this.processIndex = index;
     index++;
   }
-
   @Override
   public int compareTo(java.lang.Object o){
     sProcess otherProcess = (sProcess)o;

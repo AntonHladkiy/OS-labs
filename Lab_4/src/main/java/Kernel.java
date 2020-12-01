@@ -331,7 +331,7 @@ public class Kernel extends Thread
         physicalPages.addElement(i);
       }
     }
-    clock=new Clock(physicalPages, memVector);
+    clock=new Clock(physicalPages, memVector,50);
     for (i = 0; i < instructVector.size(); i++) 
     {
       high = block * virtPageNum;

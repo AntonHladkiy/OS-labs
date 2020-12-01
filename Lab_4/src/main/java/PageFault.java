@@ -79,30 +79,32 @@ public class PageFault {
 //      oldestPage = firstPage;
 //    }
 
-    Page oldestPage = clock.getOldest();
-    if(oldestPage.R!=0){
-      oldestPage.R=0;
-      Page page;
+    Page page = clock.getCurrent();
+    if(page.R!=0){
+      page.R=0;
+      Page tempPage;
       while(true){
-        page=clock.getNext();
-        if(page.R!=0){
-          page.R=0;
-          clock.setR( page.physical, (byte) 0 );
+        tempPage=clock.getNext();
+        if(tempPage.R!=0){
+          tempPage.R=0;
+          clock.setR( tempPage.physical, (byte) 0 );
         } else{
-          oldestPage=page;
+          if(tempPage.lastTouchTime>clock.getTau())
+          page=tempPage;
           break;
         }
       }
     }
     Page nextpage = ( Page ) mem.elementAt( replacePageNum );
-    controlPanel.removePhysicalPage( oldestPage.physical );
-    nextpage.physical = oldestPage.physical;
+    controlPanel.removePhysicalPage( page.physical );
+    nextpage.physical = page.physical;
     controlPanel.addPhysicalPage( nextpage.physical , replacePageNum );
-    clock.set(oldestPage.physical,replacePageNum);
-    oldestPage.inMemTime = 0;
-    oldestPage.lastTouchTime = 0;
-    oldestPage.R = 0;
-    oldestPage.M = 0;
-    oldestPage.physical = -1;
+    clock.set(page.physical,replacePageNum);
+    clock.getNext();
+    page.inMemTime = 0;
+    page.lastTouchTime = 0;
+    page.R = 0;
+    page.M = 0;
+    page.physical = -1;
   }
 }
