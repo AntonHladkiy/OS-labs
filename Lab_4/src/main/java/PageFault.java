@@ -80,17 +80,37 @@ public class PageFault {
 //    }
 
     Page page = clock.getCurrent();
-    if(page.R!=0){
-      page.R=0;
+    int current=clock.getCurrentPage();
+    if(page.R!=0||(page.R==0&&page.lastTouchTime<=clock.getTau())) {
+      Page oldestPage = null;
+      if (page.R == 0) {
+        oldestPage = page;
+      } else {
+        page.R = 0;
+        clock.setR( page.physical, (byte) 0 );
+      }
       Page tempPage;
-      while(true){
-        tempPage=clock.getNext();
-        if(tempPage.R!=0){
-          tempPage.R=0;
+      while (true) {
+        tempPage = clock.getNext( );
+        if (tempPage.R != 0) {
+          tempPage.R = 0;
           clock.setR( tempPage.physical, (byte) 0 );
-        } else{
-          if(tempPage.lastTouchTime>clock.getTau())
-          page=tempPage;
+        } else {
+          if (tempPage.lastTouchTime > clock.getTau( )) {
+            page = tempPage;
+            break;
+          } else {
+            if (oldestPage == null) {
+              oldestPage = tempPage;
+            } else {
+              if (tempPage.lastTouchTime > oldestPage.lastTouchTime) {
+                oldestPage = tempPage;
+              }
+            }
+          }
+        }
+        if (clock.getCurrentPage( ) == current) {
+          page = oldestPage;
           break;
         }
       }

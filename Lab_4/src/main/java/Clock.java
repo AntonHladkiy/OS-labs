@@ -5,6 +5,7 @@ import java.util.*;
 public class Clock {
     @Getter
     private int tau;
+    @Getter
     private int currentPage=0;
     private List<Integer> pagesPhysical;
     private List<Page> pagesVirtual;
